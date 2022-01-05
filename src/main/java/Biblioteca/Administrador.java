@@ -1,5 +1,7 @@
 package Biblioteca;
 
+import java.util.*;
+
 public class Administrador {
     private static long contador = 0;
     private long id;
@@ -34,15 +36,21 @@ public class Administrador {
         senha = senhaUsuario;
     }
 
-    protected void criaObra() {
+    protected void criaObra(String titulo, String autor, int categoria,List<Obra> obras ) {
+        
+        obras.add(new Obra(titulo, autor, categoria));
 
     }
 
-    protected void removeObra() {
+    protected void removeObra(int id, List<Obra> obras ) {
 
+        obras.remove(id);
+        
     }
 
-    protected void editaObra() {
+    protected void editaObra(String titulo, String autor,int id, int categoria,List<Obra> obras) {
+        
+        obras.set(id, new Obra(titulo, autor, categoria));
 
     }
 

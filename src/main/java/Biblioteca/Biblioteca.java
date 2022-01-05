@@ -15,21 +15,22 @@ public class Biblioteca {
         obras.add(new Obra("O segredo da sala rosa", "Glaucia Lewicki", 5));
         obras.add(new Obra("O pequeno príncipe", "Antoine de Saint-Exupéry", 6));
 
-        Usuario usuario = new Usuario("Usuario", "usuario123");
+        Usuario usuario = new Usuario("usuario", "senha");
+
+        usuarios.add(usuario);
 
         System.out.println("Bem-vindo à biblioteca!");
         System.out.println("Já é nosso usuário? [Digite 0] /OU/ É a sua primeira vez aqui? [Digite 1]");
 
-        menu(usuario);
-        //Scanner scannerLoginOuCadastro = new Scanner(System.in);
-//
-        //int loginOuCadastro = scannerLoginOuCadastro.nextInt();
-//
-        //if (loginOuCadastro == 0) {
-        //    login();
-        //} else {
-        //    cadastro();
-        //}
+        Scanner scannerLoginOuCadastro = new Scanner(System.in);
+
+        int loginOuCadastro = scannerLoginOuCadastro.nextInt();
+
+        if (loginOuCadastro == 0) {
+            login();
+        } else {
+            cadastro();
+        }
     }
 
     private static void login() {
@@ -44,8 +45,16 @@ public class Biblioteca {
         String nome = scannerNome.nextLine();
         String senha = scannerSenha.nextLine();
 
-        if (checaUsuario(nome, senha)) {
-            //menu();
+        if (checaUsuario(0, nome, senha)) {
+            Usuario novoUsuario = null;
+
+            for (Usuario usuario : usuarios) {
+                if (usuario.getNome().equals(nome) && usuario.getSenha().equals(senha)) {
+                    novoUsuario = usuario;
+                }
+            }
+
+            menu(novoUsuario);
         } else {
             System.out.println("Algo deu errado!");
             System.out.println("Confira os dados fornecidos e caso continue apresentando erros crie sua conta novamente.");
@@ -65,14 +74,12 @@ public class Biblioteca {
         String nome = scannerNome.nextLine();
         String senha = scannerSenha.nextLine();
 
-        if (checaUsuario(nome, senha)) {
+        if (checaUsuario(1, nome, senha)) {
             System.out.println("Essa conta já existe, você será direcionado para fazer o login.");
             login();
         } else {
             Usuario novoUsuario = new Usuario(nome, senha);
-
-            // registra no arquivo usuarios.txt
-
+            usuarios.add(novoUsuario);
             menu(novoUsuario);
         }
     }
@@ -192,11 +199,29 @@ public class Biblioteca {
         }
     }
 
-    private static boolean checaUsuario(String nome, String senha) {
-        // checa o arquivo usuarios.txt pelo nome e senha informados
+    private static boolean checaUsuario(Integer option, String nome, String senha) {
+        if (option == 1) {
 
-        // caso ache -> return true;
-        return true;
-        // caso não ache -> return false;
+            for (Usuario usuario : usuarios) {
+                System.out.println(usuario.getNome() + " - " + nome);
+
+                if (usuario.getNome().equals(nome)) {
+                    return true;
+                }
+
+            }
+            return false;
+        } else {
+
+            for (Usuario usuario : usuarios) {
+                System.out.println(usuario.getNome() + "," + usuario.getSenha() + " - " + nome + "," + senha);
+
+                if (usuario.getNome().equals(nome) && usuario.getSenha().equals(senha)) {
+                    return true;
+                }
+
+            }
+            return false;
+        }
     }
 }
