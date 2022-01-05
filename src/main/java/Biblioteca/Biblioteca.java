@@ -3,7 +3,14 @@ package Biblioteca;
 import java.util.*;
 
 public class Biblioteca {
+
+    public static List<Usuario> usuarios = new ArrayList<>();
+
     public static void main(String[] args) {
+
+        usuarios = new ArrayList<>();
+        usuarios.add(new Usuario("usuario", "senha"));
+
         System.out.println("Bem-vindo à biblioteca!");
         System.out.println("Já é nosso usuário? [Digite 0] /OU/ É a sua primeira vez aqui? [Digite 1]");
 
@@ -30,7 +37,7 @@ public class Biblioteca {
         String nome = scannerNome.nextLine();
         String senha = scannerSenha.nextLine();
 
-        if (checaUsuario(nome, senha)) {
+        if (checaUsuario(0, nome, senha)) {
             menu();
         } else {
             System.out.println("Algo deu errado!");
@@ -51,14 +58,13 @@ public class Biblioteca {
         String nome = scannerNome.nextLine();
         String senha = scannerSenha.nextLine();
 
-        if (checaUsuario(nome, senha)) {
+        if (checaUsuario(1, nome, senha)) {
             System.out.println("Essa conta já existe, você será direcionado para fazer o login.");
             login();
         } else {
-            Usuario novoUsuario = new Usuario(nome, senha);
+            usuarios.add(new Usuario(nome, senha));
 
             // registra no arquivo usuarios.txt
-
             menu();
         }
     }
@@ -98,11 +104,34 @@ public class Biblioteca {
         }
     }
 
-    private static boolean checaUsuario(String nome, String senha) {
+    private static boolean checaUsuario(Integer option, String nome, String senha) {
+
+        if (option == 1) {
+
+            for (Usuario usuario : usuarios) {
+                System.out.println(usuario.getNome() + " - " + nome);
+
+                if (usuario.getNome().equals(nome)) {
+                    return true;
+                }
+
+            }
+            return false;
+        } else {
+
+            for (Usuario usuario : usuarios) {
+                System.out.println(usuario.getNome() + "," + usuario.getSenha() + " - " + nome + "," + senha);
+
+                if (usuario.getNome().equals(nome) && usuario.getSenha().equals(senha)) {
+                    return true;
+                }
+
+            }
+            return false;
+        }
+
         // checa o arquivo usuarios.txt pelo nome e senha informados
-
         // caso ache -> return true;
-
         // caso não ache -> return false;
     }
 }
