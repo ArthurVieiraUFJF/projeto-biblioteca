@@ -1,5 +1,7 @@
 package Biblioteca;
 
+import java.util.Date;
+
 public class Obra {
     private static long contador = 0;
     private long id;
@@ -8,7 +10,16 @@ public class Obra {
     private int categoria;
     private boolean reservada = false;
     private boolean alugada = false;
-    private int horasIndisponivel = 0;
+    private Date dataTiragem;
+    private long dataFinal;
+
+    //LEGENDA DAS CATEGORIAS
+    //1 - AVENTURA
+    //2 - COMÉDIA
+    //3 - ROMANCE
+    //4 - FICÇÃO
+    //5 - MISTÉRIO
+    //6 - INFANTIL
 
     protected Obra(String tituloObra, String autorObra, int categoriaObra) {
         id = contador;
@@ -35,8 +46,12 @@ public class Obra {
         return categoria;
     }
 
-    protected int getHorasIndisponivel() {
-        return horasIndisponivel;
+    protected long getDataTiragem() {
+        return dataTiragem.getTime();
+    }
+
+    protected long getDataFinal() {
+        return dataFinal;
     }
 
     protected void setTitulo(String tituloObra) {
@@ -51,31 +66,69 @@ public class Obra {
         categoria = categoriaObra;
     }
 
-    protected void setHorasIndisponivel(int horas) {
-        horasIndisponivel = horas;
-    }
+    protected void setDataFinal(long data) { dataFinal = dataFinal + data; }
 
-    protected boolean checaDisponivel() {
-        if (alugada || reservada) {
-            return false;
+    protected void checaDisponibilidade() {
+        Date dataAtual = new Date();
+
+        long diferenca = dataFinal - dataAtual.getTime();
+
+        if (diferenca <= 0) {
+            System.out.println("Disponível");
+            return;
         }
 
-        return true;
+        long segundos = diferenca / 1000;
+
+        long minutos = segundos / 60;
+
+        long horas = minutos / 60;
+
+        long dias = horas / 24;
+
+        horas = horas % 24;
+
+        minutos = minutos % 60;
+
+        segundos = segundos % 60;
+
+        System.out.println("Dias: " + dias + " | Horas: " + horas + " | Minutos: " + minutos + " | Segundos: " + segundos);
+    }
+
+    protected boolean isReservada() {
+        if (reservada) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean isAlugada() {
+        if (alugada) {
+            return true;
+        }
+
+        return false;
     }
 
     protected void alugar() {
         alugada = true;
-        horasIndisponivel = 168;
+
+        dataTiragem = new Date();
+
+        dataFinal = dataTiragem.getTime() + 604800000;
     }
 
     protected void reservar() {
         reservada = true;
-        horasIndisponivel = 48;
+
+        dataTiragem = new Date();
+
+        dataFinal = dataTiragem.getTime() + 172800000;
     }
 
     protected void devolverOuCancelar() {
         alugada = false;
         reservada = false;
-        horasIndisponivel = 0;
     }
 }
