@@ -19,17 +19,40 @@ public class Biblioteca {
 
         usuarios.add(usuario);
 
+        bemVindo();
+    }
+
+    private static void bemVindo() {
+        Administrador admin = new Administrador("admin", "admin");
+
+        administradores.add(admin);
+
         System.out.println("Bem-vindo à biblioteca!");
-        System.out.println("Já é nosso usuário? [Digite 0] /OU/ É a sua primeira vez aqui? [Digite 1]");
+        System.out.println("Acessar como USUÁRIO? [Digite 0] /OU/ Acessar como ADMINISTRADOR? [Digite 1] /OU/ SAIR [Digite 2]");
 
-        Scanner scannerLoginOuCadastro = new Scanner(System.in);
+        Scanner scannerTipoUsuario = new Scanner(System.in);
 
-        int loginOuCadastro = scannerLoginOuCadastro.nextInt();
+        int tipoUsuario = scannerTipoUsuario.nextInt();
 
-        if (loginOuCadastro == 0) {
-            login();
-        } else {
-            cadastro();
+        switch (tipoUsuario) {
+            case 0:
+                System.out.println("Já é nosso usuário? [Digite 0] /OU/ É a sua primeira vez aqui? [Digite 1]");
+
+                Scanner scannerLoginOuCadastro = new Scanner(System.in);
+
+                int loginOuCadastro = scannerLoginOuCadastro.nextInt();
+
+                if (loginOuCadastro == 0) {
+                    login();
+                } else {
+                    cadastro();
+                }
+                break;
+            case 1:
+                menuAdmin(admin);
+                break;
+            case 2:
+                System.exit(0);
         }
     }
 
@@ -66,12 +89,15 @@ public class Biblioteca {
         System.out.println("Digite abaixo o nome e a senha que usará para acessar.\n");
 
         System.out.print("\nNome:");
+
         Scanner scannerNome = new Scanner(System.in);
 
+        String nome = scannerNome.nextLine();
+
         System.out.print("\nSenha:");
+
         Scanner scannerSenha = new Scanner(System.in);
 
-        String nome = scannerNome.nextLine();
         String senha = scannerSenha.nextLine();
 
         if (checaUsuario(1, nome, senha)) {
@@ -85,6 +111,11 @@ public class Biblioteca {
     }
 
     private static void menu(Usuario usuario) {
+        if (usuario.isBloqueado()) {
+            System.out.println("Você foi bloqueado no sistema por um administrador.");
+            System.out.println("Requisite o desbloqueio para realizar suas ações.");
+        }
+
         System.out.println("Menu da biblioteca:");
         System.out.println("[0] Ver obras");
         System.out.println("[1] Alugar obra");
@@ -100,6 +131,11 @@ public class Biblioteca {
 
         switch (acao) {
             case 0:
+                if (usuario.isBloqueado()) {
+                    System.out.println("Você foi bloqueado no sistema por um administrador.");
+                    System.out.println("Requisite o desbloqueio para realizar suas ações.");
+                    break;
+                }
                 System.out.println("Aqui está nosso acervo:");
                 System.out.println("ID | Título | Autor | Categoria");
 
@@ -108,6 +144,11 @@ public class Biblioteca {
                 }
                 break;
             case 1:
+                if (usuario.isBloqueado()) {
+                    System.out.println("Você foi bloqueado no sistema por um administrador.");
+                    System.out.println("Requisite o desbloqueio para realizar suas ações.");
+                    break;
+                }
                 System.out.println("Qual obra gostaria de alugar?");
                 System.out.print("ID: ");
 
@@ -118,6 +159,11 @@ public class Biblioteca {
                 usuario.alugarObra(idAluguel, obras);
                 break;
             case 2:
+                if (usuario.isBloqueado()) {
+                    System.out.println("Você foi bloqueado no sistema por um administrador.");
+                    System.out.println("Requisite o desbloqueio para realizar suas ações.");
+                    break;
+                }
                 System.out.println("Qual obra gostaria de reservar?");
                 System.out.print("ID: ");
 
@@ -128,6 +174,11 @@ public class Biblioteca {
                 usuario.reservarObra(idReserva, obras);
                 break;
             case 3:
+                if (usuario.isBloqueado()) {
+                    System.out.println("Você foi bloqueado no sistema por um administrador.");
+                    System.out.println("Requisite o desbloqueio para realizar suas ações.");
+                    break;
+                }
                 if (usuario.possuiAluguel()) {
                     usuario.prolongarPrazo(usuario.getAluguel(), 604800000, obras);
                     System.out.println("Aluguel prorrogado!");
@@ -144,6 +195,11 @@ public class Biblioteca {
                 // requisita desbloqueio
                 break;
             case 5:
+                if (usuario.isBloqueado()) {
+                    System.out.println("Você foi bloqueado no sistema por um administrador.");
+                    System.out.println("Requisite o desbloqueio para realizar suas ações.");
+                    break;
+                }
                 System.out.println("Qual obra gostaria de checar?");
                 System.out.print("ID: ");
 
@@ -159,13 +215,124 @@ public class Biblioteca {
                 }
                 break;
             case 6:
-                return;
+                bemVindo();
+                break;
             default:
                 System.out.println("Ação inválida, por favor insira um número válido!");
                 menu(usuario);
         }
 
         menu(usuario);
+    }
+
+    private static void menuAdmin(Administrador admin) {
+        System.out.println("Menu do administrador:");
+        System.out.println("[0] Ver obras");
+        System.out.println("[1] Adicionar obra");
+        System.out.println("[2] Remover obra");
+        System.out.println("[3] Editar obra");
+        System.out.println("[4] Bloquear usuário");
+        System.out.println("[5] Desbloquear usuário");
+        System.out.println("[6] Sair");
+
+        Scanner scannerAcao = new Scanner(System.in);
+
+        int acao = scannerAcao.nextInt();
+
+        switch (acao) {
+            case 0:
+                System.out.println("ID | Título | Autor | Categoria");
+
+                for (Obra obra: obras) {
+                    System.out.println(obra.getId() + " | " + obra.getTitulo() + " | " + obra.getAutor() + " | " + checaCategoria(obra.getCategoria()) + " | " + checaEstadoObra(obra));
+                }
+                break;
+            case 1:
+                System.out.println("Para adicionar uma nova obra forneça os seguintes dados:");
+                System.out.println("Título:");
+
+                Scanner scannerTituloAdicao = new Scanner(System.in);
+
+                String tituloAdicao = scannerTituloAdicao.nextLine();
+
+                System.out.println("Autor:");
+
+                Scanner scannerAutorAdicao = new Scanner(System.in);
+
+                String autorAdicao = scannerAutorAdicao.nextLine();
+
+                System.out.println("Categoria:");
+
+                Scanner scannerCategoriaAdicao = new Scanner(System.in);
+
+                int categoriaAdicao = scannerCategoriaAdicao.nextInt();
+
+                admin.criaObra(tituloAdicao, autorAdicao, categoriaAdicao, obras);
+                break;
+            case 2:
+                System.out.println("Para remover uma nova obra forneça os seguintes dados:");
+                System.out.println("ID:");
+
+                Scanner scannerIDRemocao = new Scanner(System.in);
+
+                int idRemocao = scannerIDRemocao.nextInt();
+
+                admin.removeObra(idRemocao, obras);
+                break;
+            case 3:
+                System.out.println("Para editar uma nova obra forneça os seguintes dados:");
+                System.out.println("ID:");
+
+                Scanner scannerIDEdicao = new Scanner(System.in);
+
+                int idEdicao = scannerIDEdicao.nextInt();
+
+                System.out.println("Título:");
+
+                Scanner scannerTituloEdicao = new Scanner(System.in);
+
+                String tituloEdicao = scannerTituloEdicao.nextLine();
+
+                System.out.println("Autor:");
+
+                Scanner scannerAutorEdicao = new Scanner(System.in);
+
+                String autorEdicao = scannerAutorEdicao.nextLine();
+
+                System.out.println("Categoria:");
+
+                Scanner scannerCategoriaEdicao = new Scanner(System.in);
+
+                int categoriaEdicao = scannerCategoriaEdicao.nextInt();
+
+                admin.editaObra(idEdicao, tituloEdicao, autorEdicao, categoriaEdicao, obras);
+                break;
+            case 4:
+                System.out.println("Para bloquear um usuário forneça os seguintes dados:");
+                System.out.println("ID:");
+
+                Scanner scannerIDBloqueio = new Scanner(System.in);
+
+                int idBloqueio = scannerIDBloqueio.nextInt();
+
+                admin.bloqueiaUsuario(idBloqueio, usuarios);
+                break;
+            case 5:
+                System.out.println("Para desbloquear um usuário forneça os seguintes dados:");
+                System.out.println("ID:");
+
+                Scanner scannerIDDesbloqueio = new Scanner(System.in);
+
+                int idDesbloqueio = scannerIDDesbloqueio.nextInt();
+
+                admin.desbloqueiaUsuario(idDesbloqueio, usuarios);
+                break;
+            case 6:
+                bemVindo();
+                break;
+        }
+
+        menuAdmin(admin);
     }
 
     private static String checaEstadoObra(Obra obra) {

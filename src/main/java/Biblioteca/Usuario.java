@@ -55,6 +55,14 @@ public class Usuario {
         return false;
     }
 
+    protected void bloquear() {
+        bloqueado = true;
+    }
+
+    protected void desbloquear() {
+        bloqueado = false;
+    }
+
     protected boolean isBloqueado() {
         return bloqueado;
     }
