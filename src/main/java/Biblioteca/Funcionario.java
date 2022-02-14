@@ -1,6 +1,6 @@
 package Biblioteca;
 
-import java.util.*;
+import java.util.List;
 
 public class Funcionario extends Usuario {
     @Override
@@ -13,7 +13,7 @@ public class Funcionario extends Usuario {
     }
 
     protected void criaObra(String titulo, String autor, int categoria, List<Obra> obras ) {
-        obras.add(new Obra(titulo, autor, categoria));
+        obras.add(new Obra(titulo, autor, categoria, false, false, 0, 0));
 
         System.out.println("Obra adicionada ao acervo!");
     }

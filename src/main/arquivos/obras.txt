@@ -1,5 +1,7 @@
-TESTE OBRA 1
-TESTE OBRA 2
-TESTE OBRA 3
-
-TESTE OBRA 5
+As aventuras de TinTim/&&/Hergé/&&/1/&&/false/&&/false/&&/0/&&/0
+A divina comédia/&&/Dante Alighieri/&&/2/&&/false/&&/false/&&/0/&&/0
+O morro dos ventos uivantes/&&/Emily Brontë/&&/3/&&/false/&&/false/&&/0/&&/0
+Sombra e ossos/&&/Leigh Bardugo/&&/4/&&/false/&&/false/&&/0/&&/0
+O segredo da sala rosa/&&/Glaucia Lewicki/&&/5/&&/false/&&/false/&&/0/&&/0
+O pequeno príncipe/&&/Antoine de Saint-Exupéry/&&/6/&&/false/&&/false/&&/0/&&/0
+Dom Casmurro/&&/Machado de Assis/&&/3/&&/false/&&/false/&&/0/&&/0

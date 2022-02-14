@@ -1,6 +1,6 @@
 package Biblioteca;
 
-import java.util.*;
+import java.util.List;
 
 public class Administrador extends Usuario {
     @Override

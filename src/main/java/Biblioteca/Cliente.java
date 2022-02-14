@@ -1,6 +1,6 @@
 package Biblioteca;
 
-import java.util.*;
+import java.util.List;
 
 public class Cliente extends Usuario {
     private long aluguel = -1;
@@ -23,6 +23,10 @@ public class Cliente extends Usuario {
     protected long getReserva() {
         return reserva;
     }
+
+    protected void setAluguel(long aluguelCliente) { aluguel = aluguelCliente; }
+
+    protected void setReserva(long reservaCliente) { reserva = reservaCliente; }
 
     protected boolean isBloqueado() {
         return bloqueado;

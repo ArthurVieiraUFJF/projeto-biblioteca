@@ -1,7 +1,9 @@
 package Biblioteca;
 
-import java.util.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Biblioteca {
     private static List<Obra> obras = new ArrayList<>();
@@ -11,23 +13,16 @@ public class Biblioteca {
     private static List<Cliente> requisicoes = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
-        obras.add(new Obra("As aventuras de TinTim", "Hergé", 1));
-        obras.add(new Obra("A divina comédia", "Dante Alighieri", 2));
-        obras.add(new Obra("O morro dos ventos uivantes", "Emily Brontë", 3));
-        obras.add(new Obra("Sombra e ossos", "Leigh Bardugo", 4));
-        obras.add(new Obra("O segredo da sala rosa", "Glaucia Lewicki", 5));
-        obras.add(new Obra("O pequeno príncipe", "Antoine de Saint-Exupéry", 6));
+        leArquivo("./src/main/arquivos/obras.txt", "obras");
+        leArquivo("./src/main/arquivos/clientes.txt", "clientes");
+        leArquivo("./src/main/arquivos/funcionarios.txt", "funcionarios");
+        leArquivo("./src/main/arquivos/administradores.txt", "administradores");
 
         bemVindo();
     }
 
     private static void bemVindo() throws Exception {
-        Administrador admin = new Administrador("admin", "admin");
-        Funcionario funcionario = new Funcionario("frederico", "biblioteca");
-
-        administradores.add(admin);
-        funcionarios.add(funcionario);
-
+        salvaArquivos();
         System.out.println("Bem-vindo à biblioteca!");
         System.out.println("Acessar como: \nUSUÁRIO? [Digite 0] \nFUNCIONÁRIO? [DIGITE 1] \nADMINISTRADOR? [Digite 2] \nSAIR [Digite 4]");
 
@@ -168,7 +163,9 @@ public class Biblioteca {
                 System.out.println("ID | Título | Autor | Categoria");
 
                 for (Obra obra: obras) {
-                    System.out.println(obra.getId() + " | " + obra.getTitulo() + " | " + obra.getAutor() + " | " + checaCategoria(obra.getCategoria()) + " | " + checaEstadoObra(obra));
+                    if (obra.getId() > 0) {
+                        System.out.println(obra.getId() + " | " + obra.getTitulo() + " | " + obra.getAutor() + " | " + checaCategoria(obra.getCategoria()) + " | " + checaEstadoObra(obra));
+                    }
                 }
                 break;
             case 1:
@@ -265,7 +262,9 @@ public class Biblioteca {
                 System.out.println("ID | Título | Autor | Categoria");
 
                 for (Obra obra: obras) {
-                    System.out.println(obra.getId() + " | " + obra.getTitulo() + " | " + obra.getAutor() + " | " + checaCategoria(obra.getCategoria()) + " | " + checaEstadoObra(obra));
+                    if (obra.getId() > 0) {
+                        System.out.println(obra.getId() + " | " + obra.getTitulo() + " | " + obra.getAutor() + " | " + checaCategoria(obra.getCategoria()) + " | " + checaEstadoObra(obra));
+                    }
                 }
                 break;
             case 1:
@@ -366,7 +365,9 @@ public class Biblioteca {
                 System.out.println("ID | Título | Autor | Categoria");
 
                 for (Obra obra: obras) {
-                    System.out.println(obra.getId() + " | " + obra.getTitulo() + " | " + obra.getAutor() + " | " + checaCategoria(obra.getCategoria()) + " | " + checaEstadoObra(obra));
+                    if (obra.getId() > 0) {
+                        System.out.println(obra.getId() + " | " + obra.getTitulo() + " | " + obra.getAutor() + " | " + checaCategoria(obra.getCategoria()) + " | " + checaEstadoObra(obra));
+                    }
                 }
                 break;
             case 1:
@@ -546,16 +547,29 @@ public class Biblioteca {
         return false;
     }
 
-    private static void leArquivo(String referencia) throws IOException {
+    private static void leArquivo(String referencia, String arrayAlvo) throws IOException {
         BufferedReader bufferLeitura = new BufferedReader(new FileReader(referencia));
 
         String linha = "";
-
-        System.out.println("começou a leitura");
+        String linhaArray[];
 
         while (true) {
             if (linha != null) {
-                System.out.println(linha);
+                linhaArray = linha.split("/&&/");
+                switch (arrayAlvo) {
+                    case "obras":
+                        addObra(linhaArray);
+                        break;
+                    case "clientes":
+                        addCliente(linhaArray);
+                        break;
+                    case "funcionarios":
+                        addFuncionario(linhaArray);
+                        break;
+                    case "administradores":
+                        addAdmin(linhaArray);
+                        break;
+                }
             } else {
                 break;
             }
@@ -564,15 +578,174 @@ public class Biblioteca {
         }
 
         bufferLeitura.close();
-
-        System.out.println("terminou a leitura");
     }
 
     private static void escreveArquivo(String referencia, String conteudo) throws IOException {
         BufferedWriter bufferEscrita = new BufferedWriter(new FileWriter(referencia));
 
-        bufferEscrita.append(conteudo + "\n");
+        bufferEscrita.write(conteudo);
+
+        bufferEscrita.flush();
 
         bufferEscrita.close();
+    }
+
+    private static void addObra(String linhaArray[]) {
+        String titulo = "";
+        String autor = "";
+        int categoria = 0;
+        boolean reservada = false;
+        boolean alugada = false;
+        long dataTiragem = 0;
+        long dataFinal = 0;
+
+        for (int i = 0; i < linhaArray.length; i++) {
+            switch (i) {
+                case 0:
+                    titulo = linhaArray[i];
+                    break;
+                case 1:
+                    autor = linhaArray[i];
+                    break;
+                case 2:
+                    categoria = Integer.parseInt(linhaArray[i]);
+                    break;
+                case 3:
+                    reservada = Boolean.parseBoolean(linhaArray[i]);
+                    break;
+                case 4:
+                    alugada = Boolean.parseBoolean(linhaArray[i]);
+                    break;
+                case 5:
+                    dataTiragem = Long.parseLong(linhaArray[i]);
+                    break;
+                case 6:
+                    dataFinal = Long.parseLong(linhaArray[i]);
+                    break;
+            }
+        }
+
+        obras.add(new Obra(titulo, autor, categoria, reservada, alugada, dataTiragem, dataFinal));
+    }
+
+    private static void addCliente(String linhaArray[]) {
+        String nome = "";
+        String senha = "";
+        long aluguel = -1;
+        long reserva = -1;
+        boolean bloqueado = false;
+
+        for (int i = 0; i < linhaArray.length; i++) {
+            switch (i) {
+                case 0:
+                    nome = linhaArray[i];
+                    break;
+                case 1:
+                    senha = linhaArray[i];
+                    break;
+                case 2:
+                    aluguel = Long.parseLong(linhaArray[i]);
+                    break;
+                case 3:
+                    reserva = Long.parseLong(linhaArray[i]);
+                    break;
+                case 4:
+                    bloqueado = Boolean.parseBoolean(linhaArray[i]);
+                    break;
+            }
+        }
+
+        Cliente cliente = new Cliente(nome, senha);
+
+        cliente.setAluguel(aluguel);
+        cliente.setReserva(reserva);
+
+        if (bloqueado) {
+            cliente.bloquear();
+        } else {
+            cliente.desbloquear();
+        }
+
+        clientes.add(cliente);
+    }
+
+    private static void addFuncionario(String linhaArray[]) {
+        String nome = "";
+        String senha = "";
+
+        for (int i = 0; i < linhaArray.length; i++) {
+            switch (i) {
+                case 0:
+                    nome = linhaArray[i];
+                    break;
+                case 1:
+                    senha = linhaArray[i];
+                    break;
+            }
+        }
+
+        Funcionario funcionario = new Funcionario(nome, senha);
+
+        funcionarios.add(funcionario);
+    }
+
+    private static void addAdmin(String linhaArray[]) {
+        String nome = "";
+        String senha = "";
+
+        for (int i = 0; i < linhaArray.length; i++) {
+            switch (i) {
+                case 0:
+                    nome = linhaArray[i];
+                    break;
+                case 1:
+                    senha = linhaArray[i];
+                    break;
+            }
+        }
+
+        Administrador admin = new Administrador(nome, senha);
+
+        administradores.add(admin);
+    }
+
+    private static void salvaArquivos() throws IOException {
+        String obrasConteudo = "";
+        String clientesConteudo = "";
+        String funcionariosConteudo = "";
+        String adminsConteudo = "";
+
+        for (Obra obra: obras) {
+            if (obra.getId() > 0) {
+                obrasConteudo += obra.getTitulo() + "/&&/" + obra.getAutor() + "/&&/" + obra.getCategoria() + "/&&/" + obra.isReservada() + "/&&/" + obra.isAlugada() + "/&&/" + obra.getDataTiragem() + "/&&/" + obra.getDataFinal();
+                obrasConteudo += "\n";
+            }
+        }
+
+        for (Cliente cliente: clientes) {
+            if (!cliente.getNome().isBlank()) {
+                clientesConteudo += cliente.getNome() + "/&&/" + cliente.getSenha() + "/&&/" + cliente.getAluguel() + "/&&/" + cliente.getReserva() + "/&&/" + cliente.isBloqueado();
+                clientesConteudo += "\n";
+            }
+        }
+
+        for (Funcionario funcionario: funcionarios) {
+            if (!funcionario.getNome().isBlank()) {
+                funcionariosConteudo += funcionario.getNome() + "/&&/" + funcionario.getSenha();
+                funcionariosConteudo += "\n";
+            }
+        }
+
+        for (Administrador admin: administradores) {
+            if (!admin.getNome().isBlank()) {
+                adminsConteudo += admin.getNome() + "/&&/" + admin.getSenha();
+                adminsConteudo += "\n";
+            }
+        }
+
+        escreveArquivo("./src/main/arquivos/obras.txt", obrasConteudo);
+        escreveArquivo("./src/main/arquivos/clientes.txt", clientesConteudo);
+        escreveArquivo("./src/main/arquivos/funcionarios.txt", funcionariosConteudo);
+        escreveArquivo("./src/main/arquivos/administradores.txt", adminsConteudo);
     }
 }

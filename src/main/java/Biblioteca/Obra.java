@@ -8,9 +8,9 @@ public class Obra {
     private String titulo;
     private String autor;
     private int categoria;
-    private boolean reservada = false;
-    private boolean alugada = false;
-    private Date dataTiragem;
+    private boolean reservada;
+    private boolean alugada;
+    private long dataTiragem;
     private long dataFinal;
 
     //LEGENDA DAS CATEGORIAS
@@ -21,13 +21,17 @@ public class Obra {
     //5 - MISTÉRIO
     //6 - INFANTIL
 
-    protected Obra(String tituloObra, String autorObra, int categoriaObra) {
+    protected Obra(String tituloObra, String autorObra, int categoriaObra, boolean reservadaObra, boolean alugadaObra, long dataTiragemObra, long dataFinalObra) {
         id = contador;
         contador++;
 
         titulo = tituloObra;
         autor = autorObra;
         categoria = categoriaObra;
+        reservada = reservadaObra;
+        alugada = alugadaObra;
+        dataTiragem = dataTiragemObra;
+        dataFinal = dataFinalObra;
     }
 
     protected long getId() {
@@ -47,7 +51,7 @@ public class Obra {
     }
 
     protected long getDataTiragem() {
-        return dataTiragem.getTime();
+        return dataTiragem;
     }
 
     protected long getDataFinal() {
@@ -114,17 +118,21 @@ public class Obra {
     protected void alugar() {
         alugada = true;
 
-        dataTiragem = new Date();
+        Date data = new Date();
 
-        dataFinal = dataTiragem.getTime() + 604800000;
+        dataTiragem = data.getTime();
+
+        dataFinal = dataTiragem + 604800000;
     }
 
     protected void reservar() {
         reservada = true;
 
-        dataTiragem = new Date();
+        Date data = new Date();
 
-        dataFinal = dataTiragem.getTime() + 172800000;
+        dataTiragem = data.getTime();
+
+        dataFinal = dataTiragem + 172800000;
     }
 
     protected void devolverOuCancelar() {
