@@ -78,6 +78,7 @@ public class Obra {
         long diferenca = dataFinal - dataAtual.getTime();
 
         if (diferenca <= 0) {
+            devolverOuCancelar();
             System.out.println("Disponível");
             return;
         }

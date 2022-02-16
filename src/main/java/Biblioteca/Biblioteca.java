@@ -10,7 +10,6 @@ public class Biblioteca {
     private static List<Cliente> clientes = new ArrayList<>();
     private static List<Funcionario> funcionarios = new ArrayList<>();
     private static List<Administrador> administradores = new ArrayList<>();
-    private static List<Cliente> requisicoes = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
         leArquivo("./src/main/arquivos/obras.txt", "obras");
@@ -24,7 +23,7 @@ public class Biblioteca {
     private static void bemVindo() throws Exception {
         salvaArquivos();
         System.out.println("Bem-vindo à biblioteca!");
-        System.out.println("Acessar como: \nUSUÁRIO? [Digite 0] \nFUNCIONÁRIO? [DIGITE 1] \nADMINISTRADOR? [Digite 2] \nSAIR [Digite 4]");
+        System.out.println("Acessar como: \nUSUÁRIO? [Digite 0] \nFUNCIONÁRIO? [DIGITE 1] \nADMINISTRADOR? [Digite 2] \nSAIR [Digite 3]");
 
         Scanner scannerTipoUsuario = new Scanner(System.in);
 
@@ -116,7 +115,7 @@ public class Biblioteca {
         }
     }
 
-    private static void cadastro() throws Exception {
+    public static void cadastro() throws Exception {
         System.out.println("Digite abaixo o nome e a senha que usará para acessar.\n");
 
         System.out.print("\nNome:");
@@ -146,9 +145,8 @@ public class Biblioteca {
         System.out.println("[1] Alugar obra");
         System.out.println("[2] Reservar obra");
         System.out.println("[3] Prolongar prazo");
-        System.out.println("[4] Requisitar desbloqueio");
-        System.out.println("[5] Checar disponibilidade");
-        System.out.println("[6] Sair");
+        System.out.println("[4] Checar disponibilidade");
+        System.out.println("[5] Sair");
 
         Scanner scannerAcao = new Scanner(System.in);
 
@@ -211,9 +209,6 @@ public class Biblioteca {
                 System.out.println("Usuário não tem aluguel/reserva na biblioteca.");
                 break;
             case 4:
-                requisicoes.add(cliente);
-                break;
-            case 5:
                 if (cliente.isBloqueado()) {
                     throw new Exception("Você foi bloqueado no sistema por um administrador. \nRequisite o desbloqueio para realizar suas ações.");
                 }
@@ -231,15 +226,17 @@ public class Biblioteca {
                     }
                 }
                 break;
-            case 6:
+            case 5:
                 bemVindo();
                 break;
             default:
                 System.out.println("Ação inválida, por favor insira um número válido!");
-                menuCliente(cliente);
+                break;
         }
 
-        menuCliente(cliente);
+        if (acao != 5) {
+            menuCliente(cliente);
+        }
     }
 
     private static void menuFuncionario(Funcionario funcionario) throws Exception {
@@ -340,7 +337,9 @@ public class Biblioteca {
                 break;
         }
 
-        menuFuncionario(funcionario);
+        if (acao != 4) {
+            menuFuncionario(funcionario);
+        }
     }
 
     private static void menuAdmin(Administrador admin) throws Exception {
@@ -458,18 +457,15 @@ public class Biblioteca {
 
                 admin.desbloqueiaUsuario(idDesbloqueio, clientes);
 
-                for (Cliente requisicao: requisicoes) {
-                    if (requisicao.getId() == idDesbloqueio) {
-                        requisicoes.remove(requisicao.getId());
-                    }
-                }
                 break;
             case 6:
                 bemVindo();
                 break;
         }
 
-        menuAdmin(admin);
+        if (acao != 6) {
+            menuAdmin(admin);
+        }
     }
 
     private static String checaEstadoObra(Obra obra) {
